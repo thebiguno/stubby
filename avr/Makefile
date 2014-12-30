@@ -15,8 +15,7 @@ OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
 AVRSIZE=avr-size
 CFLAGS=-mmcu=$(MMCU) -pedantic -Os -Wall
-CDEFS=-DF_CPU=$(F_CPU)
-#CLIBS=
+LFLAGS=-Wl,-u,vfprintf -lprintf_flt -lc
 
 # End of variables.mk
 
@@ -50,6 +49,8 @@ ifndef TWI_FREQ
 	TWI_FREQ=400000L
 endif
 
+
+CDEFS=-DF_CPU=$(F_CPU) -lc -lm -DTWI_FREQ=$(TWI_FREQ) -DPCB_REVISION=$(PCB_REVISION) -DMAGNETOMETER=$(MAGNETOMETER) -DMAGNETOMETER_ORIENTATION_OFFSET=$(MAGNETOMETER_ORIENTATION_OFFSET) -DDISTANCE_SENSOR=$(DISTANCE_SENSOR) -DSERIAL_BUFFER_SIZE=255 -DPWM_MAX_PINS=21
 PROJECT=stubby
 MMCU=atmega1284p
 COMPILER=avr-g++
@@ -61,11 +62,6 @@ SOURCES=Stubby.cpp Leg.cpp \
 	util/convert.c util/delays.c util/math.c \
 	lib/protocol/protocol.c lib/protocol/protocol_serial.c lib/pwm/pwm.c lib/pwm/pwm.S lib/serial/serial.c lib/serial/serial_async_tx.c lib/twi/twi.c lib/Ring/Ring.cpp
 AVRDUDE_PROGRAMMER=usbtiny
-
-# You can also define anything here and it will override 
-# the definitions in variables.mk
-
-CDEFS+=-lc -lm -DTWI_FREQ=$(TWI_FREQ) -DPCB_REVISION=$(PCB_REVISION) -DMAGNETOMETER=$(MAGNETOMETER) -DMAGNETOMETER_ORIENTATION_OFFSET=$(MAGNETOMETER_ORIENTATION_OFFSET) -DDISTANCE_SENSOR=$(DISTANCE_SENSOR) -DSERIAL_BUFFER_SIZE=255 -DPWM_MAX_PINS=21 -Wl,-u,vfprintf -lprintf_flt -lc
 
 LFUSE=0xF7
 HFUSE=0xD1
@@ -122,7 +118,7 @@ $(PROJECT).asm: $(PROJECT).out
 	$(OBJDUMP) -C -d $(PROJECT).out
 
 $(PROJECT).out: $(SOURCES) 
-	$(COMPILER) $(CDEFS) $(CFLAGS) -I./ -o $(PROJECT).out $(CLIBS) $(SOURCES) 
+	$(COMPILER) $(CDEFS) $(CFLAGS) -I./ -o $(PROJECT).out $(CLIBS) $(SOURCES) $(LFLAGS)
 
 
 program: all
