@@ -20,6 +20,7 @@ CDEFS=-DF_CPU=$(F_CPU)
 
 # End of variables.mk
 
+# Most user configurable options are in this file.
 include hardware.mk
 
 ifndef PCB_REVISION
@@ -64,7 +65,7 @@ AVRDUDE_PROGRAMMER=usbtiny
 # You can also define anything here and it will override 
 # the definitions in variables.mk
 
-CDEFS+=-DTWI_FREQ=$(TWI_FREQ) -DPCB_REVISION=$(PCB_REVISION) -DMAGNETOMETER=$(MAGNETOMETER) -DMAGNETOMETER_ORIENTATION_OFFSET=$(MAGNETOMETER_ORIENTATION_OFFSET) -DDISTANCE_SENSOR=$(DISTANCE_SENSOR) -DSERIAL_BUFFER_SIZE=255 -DPWM_MAX_PINS=21 -Wl,-u,vfprintf -lprintf_flt -lm
+CDEFS+=-lc -lm -DTWI_FREQ=$(TWI_FREQ) -DPCB_REVISION=$(PCB_REVISION) -DMAGNETOMETER=$(MAGNETOMETER) -DMAGNETOMETER_ORIENTATION_OFFSET=$(MAGNETOMETER_ORIENTATION_OFFSET) -DDISTANCE_SENSOR=$(DISTANCE_SENSOR) -DSERIAL_BUFFER_SIZE=255 -DPWM_MAX_PINS=21 -Wl,-u,vfprintf -lprintf_flt -lc
 
 LFUSE=0xF7
 HFUSE=0xD1
@@ -106,7 +107,6 @@ else
 endif
 
 # Default target.
-
 all: clean build
 
 build: $(PROJECT).hex
@@ -122,7 +122,7 @@ $(PROJECT).asm: $(PROJECT).out
 	$(OBJDUMP) -C -d $(PROJECT).out
 
 $(PROJECT).out: $(SOURCES) 
-	$(COMPILER) $(CDEFS) $(CFLAGS) -I./ -o $(PROJECT).out $(SOURCES) $(CLIBS)
+	$(COMPILER) $(CDEFS) $(CFLAGS) -I./ -o $(PROJECT).out $(CLIBS) $(SOURCES) 
 
 
 program: all
