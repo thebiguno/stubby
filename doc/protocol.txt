@@ -30,11 +30,9 @@ Portions in [square brackets] are optional.
 Command						Direction				Payload																				Response
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- General commands
+AnnounceControlId			Control -> Stubby		Controller ID; UC = 0x55 ('U'), Processing = 0x50 ('P'), Calibration = 'C', etc		None
 SendAcknowledge				Stubby -> Control		Command being ack'd (1 byte)														None
 SendComplete				Stubby -> Control		Command completed (1 byte)															None
-
-RequestControlConfig		Control -> Stubby		Controller ID; UC = 0x55 ('U'), Processing = 0x50 ('P'), Calibration = 'C', etc		None
-SendControlConfig			Stubby -> Control		Configuration for controller														None
 
 RequestEnableDebug			Control -> Stubby		Null																				Ack
 RequestDisableDebug			Control -> Stubby		Null																				Ack
