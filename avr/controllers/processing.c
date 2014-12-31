@@ -191,6 +191,8 @@ void processing_command_executor(){
 	
 #if F_CPU == 12000000
 	delay_ms(1);
+#elif F_CPU == 18432000
+	delay_ms(4);
 #elif F_CPU == 20000000
 	delay_ms(5);
 #else

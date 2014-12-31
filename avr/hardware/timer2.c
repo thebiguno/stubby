@@ -19,6 +19,10 @@ ISR(TIMER2_OVF_vect){
 	#define MAGNETOMETER_RESET			3
 	#define BATTERY_RESET				31
 	#define DISTANCE_RESET				63
+#elif F_CPU == 18432000
+	#define MAGNETOMETER_RESET			6
+	#define BATTERY_RESET				63
+	#define DISTANCE_RESET				127
 #elif F_CPU == 20000000
 	#define MAGNETOMETER_RESET			7
 	#define BATTERY_RESET				63

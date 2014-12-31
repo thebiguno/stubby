@@ -83,6 +83,8 @@ void uc_remote_control(){
 			pwm_apply_batch();
 #if F_CPU == 12000000
 			delay_ms(5);
+#elif F_CPU == 18432000
+			delay_ms(8);
 #elif F_CPU == 20000000
 			delay_ms(10);
 #else
@@ -108,6 +110,8 @@ void uc_remote_control(){
 			pwm_apply_batch();
 #if F_CPU == 12000000
 			delay_ms(5);
+#elif F_CPU == 18432000
+			delay_ms(8);
 #elif F_CPU == 20000000
 			delay_ms(10);
 #else
@@ -155,6 +159,8 @@ void uc_remote_control(){
 			pwm_apply_batch();
 #if F_CPU == 12000000
 			delay_ms(5);
+#elif F_CPU == 18432000
+			delay_ms(7);
 #elif F_CPU == 20000000
 			delay_ms(8);
 #else

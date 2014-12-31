@@ -23,6 +23,8 @@ void delay_ms(uint16_t ms){
 		magnetometer_take_reading();
 #if F_CPU == 12000000
 		_ms -= 0.33;	//Determined from logic probes at 12MHz
+#elif F_CPU == 18432000
+		_ms -= 0.22;	//Approximation based on 12MHz one
 #elif F_CPU == 20000000
 		_ms -= 0.2;		//Approximation based on 12MHz one
 #else
@@ -38,6 +40,8 @@ void delay_ms(uint16_t ms){
 		if (battery_status_enabled){
 #if F_CPU == 12000000
 		_ms -= 0.22;		//Determined from logic probes at 12MHz
+#elif F_CPU == 18432000
+		_ms -= 0.15;		//Approximation based on 12MHz one
 #elif F_CPU == 20000000
 		_ms -= 0.13;		//Approximation based on 12MHz one
 #else
