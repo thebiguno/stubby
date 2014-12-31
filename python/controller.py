@@ -75,29 +75,54 @@ def keyboard_listener():
 				return
 				
 			if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-				if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
+				if event.key in [pygame.K_t, pygame.K_RCTRL, pygame.K_LCTRL]:
+					if event.key == pygame.K_t:
+						button_id = CONTROLLER_BUTTON_VALUE_START
+					elif event.key == pygame.K_RCTRL:
+						button_id = CONTROLLER_BUTTON_VALUE_RIGHT2
+					elif event.key == pygame.K_LCTRL:
+						button_id = CONTROLLER_BUTTON_VALUE_LEFT2
+					
+					if event.type == pygame.KEYDOWN:
+						write(MESSAGE_UC_BUTTON_PUSH, [button_id])
+					else:
+						write(MESSAGE_UC_BUTTON_RELEASE, [button_id])
+					
+					
+				if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_w]:
 					if event.type == pygame.KEYDOWN:
 						keys[event.key] = True
 					else:
 						del keys[event.key]
 				
-					if pygame.K_LEFT in keys:
+					if pygame.K_a in keys:
 						left_x = 0
-					elif pygame.K_RIGHT in keys:
+					elif pygame.K_d in keys:
 						left_x = 255
 					else:
 						left_x = 128
 
-					if pygame.K_UP in keys:
+					if pygame.K_w in keys:
 						left_y = 0
-					elif pygame.K_DOWN in keys:
+					elif pygame.K_s in keys:
 						left_y = 255
 					else:
 						left_y = 128
 						
-					right_x = 128
-					right_y = 128
-				
+					if pygame.K_LEFT in keys:
+						right_x = 0
+					elif pygame.K_RIGHT in keys:
+						right_x = 255
+					else:
+						right_x = 128
+
+					if pygame.K_UP in keys:
+						right_y = 0
+					elif pygame.K_DOWN in keys:
+						right_y = 255
+					else:
+						right_y = 128
+					
 					write(MESSAGE_ANNOUNCE_CONTROL_ID, [ord('U')])
 				
 					analog = [left_x, left_y, right_x, right_y]
@@ -120,9 +145,5 @@ if (__name__=="__main__"):
 	pygame.key.set_repeat(1, 500) #No delay, 500ms interval
 	
 	write(MESSAGE_ANNOUNCE_CONTROL_ID, [ord('U')])
-	time.sleep(0.1)
-	write(MESSAGE_UC_BUTTON_PUSH, [CONTROLLER_BUTTON_VALUE_START])
-	time.sleep(0.1)
-	write(MESSAGE_UC_BUTTON_RELEASE, [CONTROLLER_BUTTON_VALUE_START])
 	
 	keyboard_listener()
