@@ -36,32 +36,33 @@ CONTROLLER_BUTTON_VALUE_SQUARE	=	0x0F
 def write(command, message):
 	'''
 	Write the given command + message to the serial port.  The command MUST be a single unsigned byte between 0 and 255.  
-	The message MUST be a list of unsigned bytes between 0 and 255.
+	The message MUST be a list of numbers between 0x00 and 0xFF.
 	'''
 	START = 0x7e
 	ESCAPE = 0x7d
 	
 	def append_byte(data, b, escape=True):
-		if (escape and (b == START or b == ESCAPE)):
-			data.append(ESCAPE)
-			data.append(b ^ 0x20)
+		if (escape and (b == chr(START) or b == chr(ESCAPE))):
+			data.append(chr(ESCAPE))
+			data.append(chr(b ^ 0x20))
 		else:
-			data.append(b)
+			data.append(chr(b))
 
-	data = [START]
-	append_byte(data, str(len(message) + 1))
-	append_byte(data, str(command))
+	data = [chr(START)]
+	append_byte(data, len(message) + 1)
+	append_byte(data, command)
 	
 	checksum = command
 	for b in message:
 		checksum = (checksum + b) & 0xFF
-		data.append(b)
+		data.append(chr(b))
 		
 	append_byte(data, (0xFF - checksum))
 	
+	print(data)
 	for b in data:
-		print(str(b))
-		ser.write(str(b))
+		print(hex(ord(b)))
+		ser.write(b)
 
 def keyboard_listener():
 	keys = {}
@@ -74,39 +75,35 @@ def keyboard_listener():
 				return
 				
 			if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-				if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_z, pygame.K_x]:
+				if event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]:
 					if event.type == pygame.KEYDOWN:
 						keys[event.key] = True
 					else:
 						del keys[event.key]
 				
-				if pygame.K_LEFT in keys:
-					left_x = 0
-				elif pygame.K_RIGHT in keys:
-					left_x = 255
-				else:
-					left_x = 128
+					if pygame.K_LEFT in keys:
+						left_x = 0
+					elif pygame.K_RIGHT in keys:
+						left_x = 255
+					else:
+						left_x = 128
 
-				if pygame.K_UP in keys:
-					left_y = 0
-				elif pygame.K_DOWN in keys:
-					left_y = 255
-				else:
-					left_y = 128
+					if pygame.K_UP in keys:
+						left_y = 0
+					elif pygame.K_DOWN in keys:
+						left_y = 255
+					else:
+						left_y = 128
+						
+					right_x = 128
+					right_y = 128
+				
+					write(MESSAGE_ANNOUNCE_CONTROL_ID, [ord('U')])
+				
+					analog = [left_x, left_y, right_x, right_y]
+					write(MESSAGE_UC_JOYSTICK_MOVE, analog)
+					print(keys)
 					
-				right_x = 128
-				right_y = 128
-				
-				write(MESSAGE_ANNOUNCE_CONTROL_ID, [ord('U')])
-				time.sleep(0.1)
-				write(MESSAGE_UC_BUTTON_PUSH, [CONTROLLER_BUTTON_VALUE_START])
-				time.sleep(0.1)
-				write(MESSAGE_UC_BUTTON_RELEASE, [CONTROLLER_BUTTON_VALUE_START])
-
-				
-				analog = [left_x, left_y, right_x, right_y]
-				write(MESSAGE_UC_JOYSTICK_MOVE, analog)
-				print(keys)
 			
 				
 
