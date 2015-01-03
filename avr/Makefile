@@ -1,19 +1,11 @@
 # Copied from variables.mk
 OS=$(shell uname -s)
 
-#AVRDude options
-ifeq ($(OS),Linux)
-	AVRDUDE_PORT=/dev/ttyUSB0
-else
-	AVRDUDE_PORT=/dev/tty.usbserial*
-endif
-DFU=dfu-programmer
 AVRDUDE=avrdude
-AVRDUDE_PROGRAMMER=stk500v1
-
 OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
 AVRSIZE=avr-size
+
 CFLAGS=-mmcu=$(MMCU) -pedantic -Os -Wall
 LFLAGS=-Wl,-u,vfprintf -lprintf_flt -lc
 
@@ -21,6 +13,20 @@ LFLAGS=-Wl,-u,vfprintf -lprintf_flt -lc
 
 # Most user configurable options are in this file.
 include hardware.mk
+
+ifndef AVRDUDE_PROGRAMMER
+	AVRDUDE_PROGRAMMER=usbtiny
+endif
+
+ifneq 'usbtiny' '$(AVRDUDE_PROGRAMMER)'
+ifndef AVRDUDE_PORT
+ifeq ($(OS),Linux)
+	AVRDUDE_PORT=/dev/ttyUSB0
+else
+$(error Please define AVRDUDE_PORT in hardware.mk)
+endif
+endif
+endif
 
 ifndef PCB_REVISION
 	PCB_REVISION=2
@@ -61,7 +67,6 @@ SOURCES=Stubby.cpp Leg.cpp \
 	types/Point.cpp \
 	util/convert.c util/delays.c util/math.c \
 	lib/protocol/protocol.c lib/protocol/protocol_serial.c lib/pwm/pwm.c lib/pwm/pwm.S lib/serial/serial.c lib/serial/serial_async_tx.c lib/twi/twi.c lib/Ring/Ring.cpp
-AVRDUDE_PROGRAMMER=usbtiny
 
 LFUSE=0xF7
 HFUSE=0xD1
@@ -88,6 +93,10 @@ ifeq 'arduino' '$(AVRDUDE_PROGRAMMER)'
 	ifeq ($(OS),Linux)
 		AVRDUDE_PREP_COMMANDS=stty -F $(AVRDUDE_PORT) hupcl
 	endif
+	AVRDUDE_ARGS += -P $(AVRDUDE_PORT) -b 115200
+endif
+
+ifeq 'stk500v2' '$(AVRDUDE_PROGRAMMER)'
 	AVRDUDE_ARGS += -P $(AVRDUDE_PORT) -b 115200
 endif
 
@@ -122,42 +131,25 @@ $(PROJECT).out: $(SOURCES)
 
 
 program: all
-ifeq 'dfu' '$(AVRDUDE_PROGRAMMER)'
-	$(DFU) $(MMCU) erase
-	$(DFU) $(MMCU) flash $(PROJECT).hex
-else
 	$(AVRDUDE_PREP_COMMANDS)
 	$(AVRDUDE) -F -p $(MMCU) -c $(AVRDUDE_PROGRAMMER) \
 		$(AVRDUDE_ARGS) $(AVRDUDE_SPEED)\
 		-U flash:w:$(PROJECT).hex 
-endif
 
 fuse:
-ifeq 'dfu' '$(AVRDUDE_PROGRAMMER)'
-	echo "Cannot set fuses in DFU Programmer mode"
-else
 	$(AVRDUDE) -F -p $(MMCU) -c $(AVRDUDE_PROGRAMMER) \
 		$(AVRDUDE_ARGS) \
 		-U lfuse:w:$(LFUSE):m -U hfuse:w:$(HFUSE):m $(EXTENDED_FUSE_WRITE)
-endif
 
 readfuse: 
-ifeq 'dfu' '$(AVRDUDE_PROGRAMMER)'
-	echo "Cannot set fuses in DFU Programmer mode"
-else
 	$(AVRDUDE) -V -F -p $(MMCU) -c $(AVRDUDE_PROGRAMMER) \
 		$(AVRDUDE_ARGS) \
 		-U lfuse:r:-:h -U hfuse:r:-:h -U efuse:r:-:h
-endif
 
 readeeprom: 
-ifeq 'dfu' '$(AVRDUDE_PROGRAMMER)'
-	$(DFU) $(MMCU) dump-eeprom --quiet | hexdump
-else
 	$(AVRDUDE) -V -F -p $(MMCU) -c $(AVRDUDE_PROGRAMMER) \
 		$(AVRDUDE_ARGS) \
 		-U eeprom:r:-:h
-endif
 
 clean:
 	rm -f *.o

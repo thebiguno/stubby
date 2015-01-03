@@ -29,3 +29,9 @@
 # (most likely happening if you don't have high enough pull-ups on SDA / SCL).
 #Defaults to 400000L
 #TWI_FREQ=400000L
+
+#Change the AVR programmer if needed.  Defaults to usbtiny
+#AVRDUDE_PROGRAMMER=stk500v2
+
+#Change the AVR Programmer port if needed.  Defaults to nothing (as usbtiny uses USB VID/PID)
+#AVRDUDE_PORT=
