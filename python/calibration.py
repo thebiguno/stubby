@@ -80,7 +80,7 @@ When entering this mode, Stubby should be lifted off the ground by its main body
 leg will return to its neutral position (i.e. the position where each servo is sent a 
 1500us PWM signal).  A protractor can then be used to measure each joint, according
 to the diagrams available at:
-http://git.digitalcave.ca/gitweb/?p=projects.git;a=blob_plain;f=projects/stubby/doc/diagrams.pdf
+https://github.com/thebiguno/stubby/raw/master/doc/diagrams.pdf
 
 The calibration units for this mode are tens of mirco seconds (us), modifying the PWM signal 
 directly.  For instance, if the drive calculations indicate that a servo should be sent a 1200us 
