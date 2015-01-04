@@ -120,7 +120,8 @@ Press enter to set the logs to their default positions, and to begin calibration
 		print("Invalid mode detected")
 		return
 		
-
+	
+	writeMessage(ser, 0x00, [0x43])
 	writeMessage(ser, requestMessage, [])
 	response = readMessage(ser)
 	if (response == False):
@@ -213,6 +214,7 @@ Please place Stubby on the floor, and press enter.
 """)
 
 	while True:
+		writeMessage(ser, 0x00, [0x43])
 		writeMessage(ser, MESSAGE_REQUEST_MAGNETOMETER_CALIBRATION, [])
 		response = readMessage(ser)
 		if (response == False):
