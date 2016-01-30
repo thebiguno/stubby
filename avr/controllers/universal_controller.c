@@ -365,7 +365,7 @@ void uc_command_executor(){
  */
 void uc_dispatch_message(uint8_t cmd, uint8_t *message, uint8_t length){
 	if (cmd == MESSAGE_UC_BUTTON_PUSH){
-		if (message[0] == CONTROLLER_BUTTON_VALUE_START){
+		if (message[0] == CONTROLLER_BUTTON_VALUE_START || message[0] == CONTROLLER_BUTTON_VALUE_SQUARE){
 			set_power(get_power() ^ POWER_ON);
 		}
 
