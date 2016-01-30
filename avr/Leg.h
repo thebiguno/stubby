@@ -63,7 +63,7 @@
 #define FEMUR_E_OFFSET_ANGLE			(31.5 * M_PI / 180)
 //The angle at which the servo horn extends from the servo when a neutral PWM signal is applied.  See
 // figure 1.4, angle 'N'
-#define FEMUR_NEUTRAL_SERVO_ANGLE		(132 * M_PI / 180)
+#define FEMUR_NEUTRAL_SERVO_ANGLE		(135 * M_PI / 180)
 
 //For the Coxa joint we just use a linear equation to determine the offsets, since it is close enough for
 // most purposes and eliminates a lot of math needed for the drive system calculations.  To determine
