@@ -124,22 +124,24 @@ void doResetLegs(){
  * Called from ISR; keep things as short as possible.
  */
 void protocol_dispatch_message(uint8_t cmd, uint8_t *message, uint8_t length){
-	if (cmd == MESSAGE_ANNOUNCE_CONTROL_ID){
-		if (message[0] == 'U'){
-			controller = CONTROLLER_UC;
-		}
-		else if (message[0] == 'P'){
-			controller = CONTROLLER_PROCESSING;
-		}
-		else if (message[0] == 'C'){
-			controller = CONTROLLER_CALIBRATION;
-		}
-		//TODO Put any other supported control modes here.
-		else {
-			controller = CONTROLLER_NONE;
-		}
+	if ((cmd& 0xF0) == 0x00){
+		//General messages; do nothing here.
 	}
-	else if (cmd == MESSAGE_REQUEST_ENABLE_DEBUG){
+	else if ((cmd& 0xF0) == 0x10){
+		controller = CONTROLLER_UC;
+	}
+	else if ((cmd& 0xF0) == 0x20){
+		controller = CONTROLLER_PROCESSING;
+	}
+	else if ((cmd& 0xF0) == 0x30){
+		controller = CONTROLLER_CALIBRATION;
+	}
+	//TODO Put any other supported control modes here.
+	else {
+		controller = CONTROLLER_NONE;
+	}
+	
+	if (cmd == MESSAGE_REQUEST_ENABLE_DEBUG){
 		debug = 0x01;
 		doAcknowledgeCommand(MESSAGE_REQUEST_ENABLE_DEBUG);
 	}
